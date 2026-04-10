@@ -1,0 +1,27 @@
+{
+  "name": "codebase-rag-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for semantic code search and Q&A using RAG",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/server.ts",
+    "start": "node dist/server.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.2",
+    "@lancedb/lancedb": "^0.14.0",
+    "apache-arrow": "^18.0.0",
+    "openai": "^4.97.0",
+    "glob": "^11.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.8.3",
+    "tsx": "^4.19.3",
+    "vitest": "^3.1.1"
+  }
+}
