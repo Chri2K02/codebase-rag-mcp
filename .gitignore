@@ -3,3 +3,6 @@ dist/
 .env
 .lancedb/
 *.js.map
+*.tsbuildinfo
+.DS_Store
+coverage/
