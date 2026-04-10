@@ -62,7 +62,7 @@ export function chunkFile(file: string, content: string, repoId: string): CodeCh
 
     if (chunkContent.length > 0) {
       chunks.push({
-        id: hashContent(`${file}:${start}:${chunkContent}`),
+        id: hashContent(`${file}:${start + 1}:${chunkContent}`),
         repoId,
         file,
         startLine: start + 1,

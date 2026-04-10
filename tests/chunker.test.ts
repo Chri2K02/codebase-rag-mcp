@@ -46,7 +46,7 @@ describe('chunkFile', () => {
     const chunks = chunkFile('test.ts', sampleTs, 'repo-1')
     const lines = sampleTs.split('\n')
     const lastChunkEnd = Math.max(...chunks.map(c => c.endLine))
-    expect(lastChunkEnd).toBeGreaterThanOrEqual(lines.length - 1)
+    expect(lastChunkEnd).toBeGreaterThanOrEqual(lines.length)
   })
 
   it('assigns unique ids', () => {
