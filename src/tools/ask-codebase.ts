@@ -14,6 +14,10 @@ interface AskCodebaseResult {
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 export async function askCodebase(args: AskCodebaseArgs): Promise<AskCodebaseResult> {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY environment variable is not set')
+  }
+
   const { question, repo } = args
   const { results } = await searchCode({ query: question, limit: 6, repo })
 
@@ -44,7 +48,7 @@ export async function askCodebase(args: AskCodebaseArgs): Promise<AskCodebaseRes
   })
 
   return {
-    answer: response.choices[0].message.content ?? 'No answer generated.',
+    answer: response.choices[0]?.message?.content ?? 'No answer generated.',
     sources: results.map(r => ({ file: r.file, startLine: r.startLine, content: r.content })),
   }
 }

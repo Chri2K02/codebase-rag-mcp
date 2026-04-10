@@ -10,7 +10,8 @@ interface SearchCodeArgs {
 
 export async function searchCode(args: SearchCodeArgs): Promise<{ results: SearchResult[] }> {
   const { query, limit = 5, repo } = args
+  const safeLimit = Math.max(1, limit)
   const queryVector = await embedQuery(query)
-  const results = await similaritySearch(queryVector, limit, repo)
+  const results = await similaritySearch(queryVector, safeLimit, repo)
   return { results }
 }
