@@ -27,7 +27,7 @@ async function getTable() {
   const database = await getDb()
   const tables = await database.tableNames()
   if (!tables.includes(TABLE_NAME)) {
-    return await database.createTable<ChunkRecord>(TABLE_NAME, [])
+    return await database.createTable(TABLE_NAME, [])
   }
   return await database.openTable(TABLE_NAME)
 }
@@ -66,7 +66,7 @@ export async function upsertChunks(chunks: CodeChunk[]): Promise<void> {
     vector: c.vector!,
   }))
 
-  await table.add(records)
+  await table.add(records as unknown as Record<string, unknown>[])
 }
 
 export async function similaritySearch(
