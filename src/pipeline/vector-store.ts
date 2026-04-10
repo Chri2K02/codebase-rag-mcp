@@ -35,13 +35,22 @@ async function getTable() {
 export async function upsertChunks(chunks: CodeChunk[]): Promise<void> {
   const table = await getTable()
 
+  // validate all chunks have been embedded
+  for (const c of chunks) {
+    if (c.vector === undefined) {
+      throw new Error(`Chunk ${c.id} (${c.file}) has no vector — run embedding before upsert`)
+    }
+  }
+
   // Remove stale chunks for these files before inserting fresh ones
   const files = [...new Set(chunks.map(c => c.file))]
   for (const file of files) {
     try {
       await table.delete(`file = '${file.replace(/'/g, "''")}'`)
-    } catch {
-      // Table may be empty on first run — ignore
+    } catch (err) {
+      // Ignore "no rows" errors on first run, re-throw anything else
+      const msg = err instanceof Error ? err.message : String(err)
+      if (!msg.includes('no rows') && !msg.includes('empty')) throw err
     }
   }
 
@@ -67,7 +76,7 @@ export async function similaritySearch(
 ): Promise<SearchResult[]> {
   const table = await getTable()
   let query = table.vectorSearch(queryVector).limit(limit)
-  if (repoId) query = query.where(`repoId = '${repoId}'`)
+  if (repoId) query = query.where(`repoId = '${repoId.replace(/'/g, "''")}'`)
 
   const results = await query.toArray()
   return results.map(r => ({
