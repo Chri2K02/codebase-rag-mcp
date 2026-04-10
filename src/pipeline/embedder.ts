@@ -15,7 +15,7 @@ function cacheKey(text: string): string {
 }
 
 function isRateLimitError(err: unknown): boolean {
-  return (err as { status?: number })?.status === 429
+  return err instanceof OpenAI.APIError && err.status === 429
 }
 
 async function embedBatch(
@@ -78,11 +78,7 @@ export async function embedQuery(query: string): Promise<number[]> {
   const key = cacheKey(query)
   if (cache.has(key)) return cache.get(key)!
 
-  const response = await client.embeddings.create({
-    model: 'text-embedding-3-small',
-    input: [query],
-  })
-  const embedding = response.data[0].embedding
-  cache.set(key, embedding)
-  return embedding
+  const { embeddings } = await embedBatch([query])
+  cache.set(key, embeddings[0])
+  return embeddings[0]
 }
