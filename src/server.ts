@@ -63,6 +63,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
   ],
 }))
 
+function requireString(args: unknown, field: string): string {
+  const val = (args as Record<string, unknown>)?.[field]
+  if (typeof val !== 'string' || val.trim() === '') {
+    throw new Error(`Missing required argument: "${field}"`)
+  }
+  return val
+}
+
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params
 
@@ -70,10 +78,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     let result: unknown
 
     if (name === 'index_repository') {
+      requireString(args, 'path')
       result = await indexRepository(args as { path: string; include?: string[]; exclude?: string[] })
     } else if (name === 'search_code') {
+      requireString(args, 'query')
       result = await searchCode(args as { query: string; limit?: number; repo?: string })
     } else if (name === 'ask_codebase') {
+      requireString(args, 'question')
       result = await askCodebase(args as { question: string; repo?: string })
     } else if (name === 'list_repositories') {
       result = await listRepositories()
